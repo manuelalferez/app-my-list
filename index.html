@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>My List</title>
     <link rel="icon" href="./src/images/logo.png">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,500i,700|Ubuntu:400,400i,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower|Roboto:300,400,500,500i,700|Ubuntu:400,400i,700" rel="stylesheet">
     <link rel="stylesheet" href="./src/styles/index.css">
     <script src="./src/js/index.js"></script>
 </head>
@@ -18,7 +18,21 @@
         <input type="text" name="name" size="40" placeholder="Buscar..." class="form-search">
         <button id="button-search"><span class="icon-search"></span></button>
     </form>
-    <div class="list"></div>
+    <button class="button-add"><img src="./src/images/plus.svg" alt=""></button>
+    <div class="list">
+        <div class="task">
+            <div class="task-check"></div>
+            <input type="text" class="task-description">
+            <input type="date" class="task-date">
+            <div class="task-remove"><img src="./src/images/delete.svg" alt=""></div>
+        </div>
+        <div class="task">
+                <div class="task-check"></div>
+                <input type="text" class="task-description">
+                <input type="date" class="task-date">
+                <div class="task-remove"><img src="./src/images/delete.svg" alt=""></div>
+            </div>
+    </div>
 </body>
 
 </html>

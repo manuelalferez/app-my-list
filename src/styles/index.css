@@ -31,16 +31,16 @@ body {
     font-family: 'Roboto', sans-serif;
     display: grid;
     background-color: white;
-    grid-template-areas: ". title ." ". form ." ". list .";
+    grid-template-areas: ". title ." ". form ." ". add ." ". list .";
     grid-template-columns: 25% 50% 25%;
-    grid-template-rows: 20vh 10vh;
+    grid-template-rows: 20vh 10vh 10vh;
 }
 
 /* Title */
 
 .title {
+    font-family: 'Indie Flower', cursive;
     font-size: 5em;
-    font-weight: 400;
     grid-area: title;
     justify-self: center;
     align-self: center;
@@ -51,7 +51,8 @@ body {
     padding-right: 1em;
     background-size: .5em;
     background-position-x: 90%;
-    color: #ea4335;
+    /* color: #ea4335; */
+    color: #fbbc05;
 }
 
 /* Search */
@@ -68,17 +69,15 @@ body {
 }
 
 .form-search {
-    width: 80%;
+    width: 85%;
     border: 1px solid black;
     border-right: none;
     padding-left: 2em;
     font-size: 2em;
 }
 
-.form-search:focus {}
-
 .form button {
-    width: 20%;
+    width: 15%;
     height: 100%;
     background: white;
     border: 1px solid black;
@@ -97,14 +96,110 @@ body {
     border-left: none;
 }
 
-.icon-search .click {
-    color: rgb(209, 245, 6);
-}
-
 .form img {
     width: 2em;
 }
 
-.list {
-    grid-area: list
+/* Botón añadir */
+.button-add{
+    grid-area: add;
+    background: none;
+    height: 80%;
+    justify-self: center;
+    align-self: center;
+    padding: 0;
+    border: 0;
+    height: 3em;
+    cursor: pointer;
+    transition-duration: 1s;
+    transition-timing-function: linear;
+   
 }
+
+.button-add:focus{
+    outline: none; /* Para quitar el borde que queda tras pulsar el botón */
+}
+
+
+
+.button-add img{
+    width: 3em;
+}
+
+.button-add:active img{
+    transform: scale(.5);
+
+}
+
+/* Lista */
+.list {
+    grid-area: list;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; 
+}
+
+.task{
+    width: 80%;
+    height: 3.5em;
+    display: grid;
+    grid-template: "task-check task-description task-date task-remove";
+    grid-template-columns: 10% 65% 20% 5%;
+    margin: 0;
+    margin-bottom: 2em;
+}
+
+.task-check{
+    grid-area: task-check;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid black;
+    border-right: none;
+    cursor: pointer;
+    background-image: url(../images/uncheck.svg);
+    background-size: 2em;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+}
+
+.task-check:hover{
+    cursor: pointer;
+}
+
+.task-description{
+    grid-area: task-description;
+    padding-left: 2em;
+    font-size: 1em;
+    border-width: 2px;
+    border-color: black; 
+}
+
+.task-description:focus{
+    outline: none;
+}
+
+.task-date{
+    grid-area: task-date;
+    font-family: 'Roboto', sans-serif;
+    border-width: 2px 2px 2px 0;
+    border-color: black; 
+}
+
+.task-remove{
+    grid-area: task-remove; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+}
+
+.task-remove img{
+    width: 2em;
+    height: 2em;
+}
+
+/* .task-check img{
+    width: 2em;
+} */
