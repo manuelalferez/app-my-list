@@ -150,6 +150,10 @@ body {
     margin-bottom: 2em;
 }
 
+.task.done{
+    background-color: #34a85359;
+}
+
 .task-check{
     grid-area: task-check;
     display: flex;
@@ -168,12 +172,18 @@ body {
     cursor: pointer;
 }
 
+.task-check.done{
+    background-image: url(../images/check.svg);
+    background-color: white;
+}
+
 .task-description{
     grid-area: task-description;
     padding-left: 2em;
     font-size: 1em;
     border-width: 2px;
     border-color: black; 
+    background-color: inherit;  
 }
 
 .task-description:focus{
@@ -185,6 +195,7 @@ body {
     font-family: 'Roboto', sans-serif;
     border-width: 2px 2px 2px 0;
     border-color: black; 
+    background-color: inherit;
 }
 
 .task-remove{
@@ -193,13 +204,20 @@ body {
     justify-content: center;
     align-items: center;
     border: none;
+    background-color: white;
 }
 
 .task-remove img{
     width: 2em;
     height: 2em;
+    transition-duration: 1s;
+    display: none;
 }
 
-/* .task-check img{
-    width: 2em;
-} */
+.task-remove.show img {
+    display: block;
+}
+
+.task-remove:active{
+    transform: scale(.5);
+}
