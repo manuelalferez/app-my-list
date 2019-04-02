@@ -60,13 +60,12 @@ class List {
         Devuelve una tarea para imprimir
     */
     printTask = (task) => {
-        debugger
         return (
             `<div class="task ${task.check ? 'done' : ''}" id="task" onmouseenter="mouseEnterTask()" onmouseleave="mouseLeaveTask()">
                     <div class="task-check ${task.check ? 'done' : ''}" id="taskCheck" onclick="checkClick()"></div>
-                    <input type="text" class="task-description" id="taskDescription" placeholder="Nueva Tarea" value=${task.description}>
+                    <input type="text" class="task-description" id="taskDescription" placeholder="Nueva Tarea" value='${task.description}'>
                     <input type="date" class="task-date" id="taskDate" value=${task.date}>
-                    <div class="task-remove" id="taskRemove"><img src="./src/images/delete.svg" alt=""></div>
+                    <div class="task-remove" id="taskRemove" onclick="taskRemoveClick()"><img src="./src/images/delete.svg" alt=""></div>
             </div>`
         )
     }
@@ -93,6 +92,10 @@ checkClick = () => {
     event.target.parentNode.classList.toggle('done')
 }
 
+taskRemoveClick = () =>{
+   /*  debugger */
+    event.target.parentNode.parentNode.remove()
+}
 
 const $buttonAdd = document.getElementById("buttonAdd")
 const $tasks = document.querySelectorAll("task")
