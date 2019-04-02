@@ -40,7 +40,14 @@ class List {
                 // Almacenamos la fecha
                 const date = task.children.taskDate
                 this.tasks[this.tasks.length - 1].date = date.value
+
+                // Almacenamos las tareas en el localStorage para recuperar los datos al volver a la página
             })
+            window.localStorage.clear() // Limpiamos los datos por si ha habido alguna modificación
+            for (let i = 0; i < this.tasks.length; i++) {
+
+                window.localStorage.setItem(`t_${i}`, JSON.stringify(this.tasks[i]))
+            }
         }
     }
 
@@ -50,7 +57,7 @@ class List {
     getTasks = () => {
         var tasksHTML = ''
         if (this.tasks.length) {
-            this.tasks.map((task) => { tasksHTML += this.printTask(task) })
+            this.tasks.map((task) => { tasksHTML += this.getTaskToPrint(task) })
         }
         this.tasks = []
         return tasksHTML
@@ -59,7 +66,7 @@ class List {
     /* 
         Devuelve una tarea para imprimir
     */
-    printTask = (task) => {
+    getTaskToPrint = (task) => {
         return (
             `<div class="task ${task.check ? 'done' : ''}" id="task" onmouseenter="mouseEnterTask()" onmouseleave="mouseLeaveTask()">
                     <div class="task-check ${task.check ? 'done' : ''}" id="taskCheck" onclick="checkClick()"></div>
@@ -92,9 +99,13 @@ checkClick = () => {
     event.target.parentNode.classList.toggle('done')
 }
 
-taskRemoveClick = () =>{
-   /*  debugger */
+taskRemoveClick = () => {
+    /*  debugger */
     event.target.parentNode.parentNode.remove()
+}
+
+printTasks = () => {
+
 }
 
 const $buttonAdd = document.getElementById("buttonAdd")
@@ -105,11 +116,21 @@ const $listDOM = document.getElementById("list")
 var myList = new List()
 
 $buttonAdd.addEventListener('click', () => {
-
     myList.setTasks($list)
     let $nuevaTarea = ''
     let nuevaTarea = new Task()
     $nuevaTarea += myList.getTasks()
-    $nuevaTarea += myList.printTask(nuevaTarea)
+    $nuevaTarea += myList.getTaskToPrint(nuevaTarea)
     $listDOM.innerHTML = $nuevaTarea
 })
+
+window.onload = () => {
+    let task = JSON.parse(window.localStorage.getItem('t_0')) // Comprobamos que existe al menos una tarea
+    let i = 0, tasksHTML = ''
+    while (task) { // Si no hay nada no entra y si hay alguna tarea se ejecuta hasta que no haya más
+        tasksHTML += myList.getTaskToPrint(task)
+        i++
+        task = JSON.parse(window.localStorage.getItem(`t_${i}`))
+    }
+    $listDOM.innerHTML = tasksHTML;
+}
