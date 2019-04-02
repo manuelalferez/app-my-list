@@ -3,7 +3,7 @@
 */
 class Task {
     constructor() {
-        this.check = ''
+        this.check = false
         this.description = ''
         this.date = ''
     }
@@ -23,23 +23,24 @@ class List {
     */
     setTasks = ($tasks) => {
         if ($tasks.length) { // Comprobamos que hay tareas
-            let task = Array.from($tasks)[$tasks.length - 1]
-            this.tasks.push(new Task())
-            // Almacenamos el check
-            const check = task.children.taskCheck
-            if (check.classList.contains('done')) {
-                this.tasks[this.tasks.length - 1].check = 'true'
-            } else {
-                this.tasks[this.tasks.length - 1].check = 'false'
-            }
+            let task = Array.from($tasks).forEach(task => {
+                this.tasks.push(new Task())
+                // Almacenamos el check
+                const check = task.children.taskCheck
+                if (check.classList.contains('done')) {
+                    this.tasks[this.tasks.length - 1].check = true
+                } else {
+                    this.tasks[this.tasks.length - 1].check = false
+                }
 
-            // Almacenamos la descripción
-            const description = task.children.taskDescription
-            this.tasks[this.tasks.length - 1].description = description.value
+                // Almacenamos la descripción
+                const description = task.children.taskDescription
+                this.tasks[this.tasks.length - 1].description = description.value
 
-            // Almacenamos la fecha
-            const date = task.children.taskDate
-            this.tasks[this.tasks.length - 1].date = date.value
+                // Almacenamos la fecha
+                const date = task.children.taskDate
+                this.tasks[this.tasks.length - 1].date = date.value
+            })
         }
     }
 
@@ -49,27 +50,9 @@ class List {
     getTasks = () => {
         var tasksHTML = ''
         if (this.tasks.length) {
-            this.tasks.map((task) => {
-                let taskHTML = this.printTask(task)
-                // Añadimos clase show a taskRemove para que al situar el mouse aparezca la X y desaparezca al retirnarnos
-        /*         let taskRemove = taskHTML.getElementById('taskRemove')
-                taskHTML.addEventListener('mouseenter', () => {
-                    taskRemove.classList.add('show')
-                })
-
-                taskHTML.addEventListener('mouseleave', () => {
-                    taskRemove.classList.remove('show')
-                })
-                // Comprobación de si está chequeada la tarea y añadirle la clase
-                const check = taskHTML.getElementById('taskCheck')
-                addListenerClickCheck(check)
-                if (task.check) {
-                    check.classList.add('done')
-                }
-                tasksHTML += taskHTML */
-            })
+            this.tasks.map((task) => { tasksHTML += this.printTask(task) })
         }
-        /*      this.tasks = [] */
+        this.tasks = []
         return tasksHTML
     }
 
@@ -77,9 +60,10 @@ class List {
         Devuelve una tarea para imprimir
     */
     printTask = (task) => {
+        debugger
         return (
-            `<div class="task" id="task">
-                    <div class="task-check" id="taskCheck"></div>
+            `<div class="task ${task.check ? 'done' : ''}" id="task" onmouseenter="mouseEnterTask()" onmouseleave="mouseLeaveTask()">
+                    <div class="task-check ${task.check ? 'done' : ''}" id="taskCheck" onclick="checkClick()"></div>
                     <input type="text" class="task-description" id="taskDescription" placeholder="Nueva Tarea" value=${task.description}>
                     <input type="date" class="task-date" id="taskDate" value=${task.date}>
                     <div class="task-remove" id="taskRemove"><img src="./src/images/delete.svg" alt=""></div>
@@ -92,32 +76,37 @@ class List {
             $task.classList.toggle('done')
         })
     }
-
-    /*     createTask = () => {
-            this.tasks.push(new Task())
-        } */
 }
+
+mouseEnterTask = (event) => {
+    const $taskRemove = this.event.toElement.children[3]
+    $taskRemove.classList.add('show')
+}
+
+mouseLeaveTask = (event) => {
+    const $taskRemove = this.event.fromElement.children[3]
+    $taskRemove.classList.remove('show')
+}
+
+checkClick = () => {
+    event.target.classList.toggle('done')
+    event.target.parentNode.classList.toggle('done')
+}
+
 
 const $buttonAdd = document.getElementById("buttonAdd")
 const $tasks = document.querySelectorAll("task")
 const $list = document.getElementById("list").children
 const $listDOM = document.getElementById("list")
-/* const $taskRemove = document.getElementById("taskRemove") */
 
 var myList = new List()
 
 $buttonAdd.addEventListener('click', () => {
+
     myList.setTasks($list)
-    /*     myList.createTask() */
     let $nuevaTarea = ''
     let nuevaTarea = new Task()
     $nuevaTarea += myList.getTasks()
-    debugger
     $nuevaTarea += myList.printTask(nuevaTarea)
     $listDOM.innerHTML = $nuevaTarea
 })
-
-/* $taskCheck.addEventListener('click', () => {
-    $taskCheck.classList.toggle('done')
-    $task.classList.toggle('done')
-}) */
