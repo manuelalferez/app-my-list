@@ -1,5 +1,4 @@
 /* Dependencias */
-
 @font-face {
     font-family: 'icomoon';
     src: url('../icon-search/icomoon.eot?t7848b');
@@ -26,7 +25,6 @@
 }
 
 /* Código fuente */
-
 body {
     font-family: 'Roboto', sans-serif;
     display: grid;
@@ -37,7 +35,6 @@ body {
 }
 
 /* Title */
-
 .title {
     font-family: 'Indie Flower', cursive;
     font-size: 5em;
@@ -56,7 +53,6 @@ body {
 }
 
 /* Search */
-
 .form {
     width: 80%;
     height: 3.5em;
@@ -90,7 +86,7 @@ body {
     font-size: 1.2em;
 }
 
-.form button:active{
+.form button:active {
     border: none;
     border: 1px solid black;
     border-left: none;
@@ -101,7 +97,7 @@ body {
 }
 
 /* Botón añadir */
-.button-add{
+.button-add {
     grid-area: add;
     background: none;
     height: 80%;
@@ -113,22 +109,19 @@ body {
     cursor: pointer;
     transition-duration: 1s;
     transition-timing-function: linear;
-   
 }
 
-.button-add:focus{
-    outline: none; /* Para quitar el borde que queda tras pulsar el botón */
+.button-add:focus {
+    outline: none; 
+    /* Para quitar el borde que queda tras pulsar el botón */
 }
 
-
-
-.button-add img{
+.button-add img {
     width: 3em;
 }
 
-.button-add:active img{
+.button-add:active img {
     transform: scale(.5);
-
 }
 
 /* Lista */
@@ -137,10 +130,11 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column; 
+    flex-direction: column;
 }
 
-.task{
+/* Tareas */
+.task {
     width: 80%;
     height: 3.5em;
     display: grid;
@@ -150,11 +144,11 @@ body {
     margin-bottom: 2em;
 }
 
-.task.done{
+.task.done {
     background-color: #34a85359;
 }
 
-.task-check{
+.task-check {
     grid-area: task-check;
     display: flex;
     justify-content: center;
@@ -168,38 +162,38 @@ body {
     background-repeat: no-repeat;
 }
 
-.task-check:hover{
+.task-check:hover {
     cursor: pointer;
 }
 
-.task-check.done{
+.task-check.done {
     background-image: url(../images/check.svg);
     background-color: white;
 }
 
-.task-description{
+.task-description {
     grid-area: task-description;
     padding-left: 2em;
     font-size: 1em;
     border-width: 2px;
-    border-color: black; 
-    background-color: inherit;  
-}
-
-.task-description:focus{
-    outline: none;
-}
-
-.task-date{
-    grid-area: task-date;
-    font-family: 'Roboto', sans-serif;
-    border-width: 2px 2px 2px 0;
-    border-color: black; 
+    border-color: black;
     background-color: inherit;
 }
 
-.task-remove{
-    grid-area: task-remove; 
+.task-description:focus {
+    outline: none;
+}
+
+.task-date {
+    grid-area: task-date;
+    font-family: 'Roboto', sans-serif;
+    border-width: 2px 2px 2px 0;
+    border-color: black;
+    background-color: inherit;
+}
+
+.task-remove {
+    grid-area: task-remove;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -207,7 +201,7 @@ body {
     background-color: white;
 }
 
-.task-remove img{
+.task-remove img {
     width: 2em;
     height: 2em;
     transition-duration: 1s;
@@ -218,6 +212,6 @@ body {
     display: block;
 }
 
-.task-remove:active{
+.task-remove:active {
     transform: scale(.5);
 }

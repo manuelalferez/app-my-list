@@ -230,14 +230,6 @@ taskDateChange = () => {
     myList.changeDate(parseInt(event.target.parentNode.dataset.id), event.target.value)
 }
 
-/* search = () => {
-    let $busqueda = ''
-    $busqueda += myList.getTasksSearch(event.target.value)
-    $listDOM.innerHTML = $busqueda
-    debugger
-    event.preventDefault()
-} */
-
 // Selección de elementos del DOM
 const $buttonAdd = document.getElementById("buttonAdd")
 const $tasks = document.querySelectorAll("task")
