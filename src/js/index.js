@@ -32,6 +32,18 @@ class List {
         return tasksHTML
     }
 
+    getTasksSearch = (description) => {
+        var tasksHTML = ''
+        if (this.tasks.length) {
+            this.tasks.map((task) => {
+                if (task.description.trim().toUpperCase() === description.trim().toUpperCase()) {
+                    tasksHTML += this.getTaskToPrint(task)
+                }
+            })
+        }
+        return tasksHTML
+    }
+
     /* 
         Devuelve una tarea para imprimir
 
@@ -218,11 +230,20 @@ taskDateChange = () => {
     myList.changeDate(parseInt(event.target.parentNode.dataset.id), event.target.value)
 }
 
+/* search = () => {
+    let $busqueda = ''
+    $busqueda += myList.getTasksSearch(event.target.value)
+    $listDOM.innerHTML = $busqueda
+    debugger
+    event.preventDefault()
+} */
+
 // Selección de elementos del DOM
 const $buttonAdd = document.getElementById("buttonAdd")
 const $tasks = document.querySelectorAll("task")
 const $list = document.getElementById("list").children
 const $listDOM = document.getElementById("list")
+const $form = document.getElementById("form")
 
 // Creación de la lista perteneciente a la APP
 var myList = new List()
@@ -239,6 +260,36 @@ $buttonAdd.addEventListener('click', () => {
 })
 
 /* 
+    Detecta una búsqueda sobre la barra de búsqueda
+
+    @post Realiza un renderizado de la lista de tareas del DOM
+    @note Realiza una búsqueda entre las tareas de myList y comprueba si alguna concuerda con la descripción introducida
+*/
+$form.addEventListener('submit', () => {
+    event.preventDefault()
+    var palabraBuscada = event.target.name.value
+    let $busqueda = ''
+    if (palabraBuscada) {
+        $busqueda += myList.getTasksSearch(event.target.name.value)
+    } else { // Si la búsqueda es vacía se muestran todas las tareas
+        $busqueda += myList.getTasks()
+    }
+    $listDOM.innerHTML = $busqueda
+})
+
+/* 
+    Detecta cuando el ratón abandona la barra de búsqueda
+
+    @post Cuando la barra de búsqueda está vacía y el ratón se retira se muestran todas las tareas
+*/
+$form.addEventListener('mouseleave', ()=>{
+    var campo = event.target.name.value
+    if(!campo){
+        $listDOM.innerHTML = myList.getTasks()
+    }
+})
+
+/* 
     Recupera del localStorage las tareas, si las hubiere, y las almacena en myList
     Muestra las tareas en el DOM
     
@@ -246,7 +297,7 @@ $buttonAdd.addEventListener('click', () => {
 window.onload = () => {
     let task = JSON.parse(window.localStorage.getItem('t_0')) // Comprobamos que existe al menos una tarea
     let i = 0, tasksHTML = ''
-     // Si no hay nada no entra y si hay alguna tarea se ejecuta hasta que no haya más
+    // Si no hay nada no entra y si hay alguna tarea se ejecuta hasta que no haya más
     while (i < window.localStorage.getItem('numKey')) {
         if (task) {
             myList.copyTask(task)
