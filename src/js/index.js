@@ -2,12 +2,13 @@
     Clase que almacena la información de una tarea
 */
 class Task {
-    constructor() {
+    constructor(key) {
         this.check = false
         this.description = ''
         this.date = ''
+        this.key = key
     }
-}
+} // class Task()
 
 /* 
     Clase que almacena las tareas 
@@ -15,120 +16,242 @@ class Task {
 class List {
     constructor() {
         this.tasks = new Array()
+        this.numKey = 0
     }
 
     /* 
-        Almacena las tareas actuales dentro del atributo tasks
-        $tasks: Array con todas las tareas contenidas en el elemento del DOM con id list
-    */
-    setTasks = ($tasks) => {
-        if ($tasks.length) { // Comprobamos que hay tareas
-            let task = Array.from($tasks).forEach(task => {
-                this.tasks.push(new Task())
-                // Almacenamos el check
-                const check = task.children.taskCheck
-                if (check.classList.contains('done')) {
-                    this.tasks[this.tasks.length - 1].check = true
-                } else {
-                    this.tasks[this.tasks.length - 1].check = false
-                }
+        Devuelve las tareas para imprimir en el DOM
 
-                // Almacenamos la descripción
-                const description = task.children.taskDescription
-                this.tasks[this.tasks.length - 1].description = description.value
-
-                // Almacenamos la fecha
-                const date = task.children.taskDate
-                this.tasks[this.tasks.length - 1].date = date.value
-
-                // Almacenamos las tareas en el localStorage para recuperar los datos al volver a la página
-            })
-            window.localStorage.clear() // Limpiamos los datos por si ha habido alguna modificación
-            for (let i = 0; i < this.tasks.length; i++) {
-
-                window.localStorage.setItem(`t_${i}`, JSON.stringify(this.tasks[i]))
-            }
-        }
-    }
-
-    /* 
-        Devuelve las tareas para imprimir
+        @return Las tareas concatenadas en formato de una cadena
     */
     getTasks = () => {
         var tasksHTML = ''
         if (this.tasks.length) {
             this.tasks.map((task) => { tasksHTML += this.getTaskToPrint(task) })
         }
-        this.tasks = []
         return tasksHTML
     }
 
     /* 
         Devuelve una tarea para imprimir
+
+        @param task: Tarea que se quiere imprimir
+        @return Una tarea en formato de una cadena
     */
     getTaskToPrint = (task) => {
         return (
-            `<div class="task ${task.check ? 'done' : ''}" id="task" onmouseenter="mouseEnterTask()" onmouseleave="mouseLeaveTask()">
+            `<div class="task ${task.check ? 'done' : ''}" id="task" data-id='${task.key}' onmouseenter="mouseEnterTask()" onmouseleave="mouseLeaveTask()">
                     <div class="task-check ${task.check ? 'done' : ''}" id="taskCheck" onclick="checkClick()"></div>
-                    <input type="text" class="task-description" id="taskDescription" placeholder="Nueva Tarea" value='${task.description}'>
-                    <input type="date" class="task-date" id="taskDate" value=${task.date}>
+                    <input type="text" class="task-description" id="taskDescription" placeholder="Nueva Tarea" value='${task.description}' onchange="taskDescriptionChange()">
+                    <input type="date" class="task-date" id="taskDate" value='${task.date}' onchange="taskDateChange()">
                     <div class="task-remove" id="taskRemove" onclick="taskRemoveClick()"><img src="./src/images/delete.svg" alt=""></div>
             </div>`
         )
     }
-    addListenerClickCheck = ($element) => {
-        $element.addEventListener("click", () => {
-            $taskCheck.classList.toggle('done')
-            $task.classList.toggle('done')
-        })
-    }
-}
 
+    /* 
+        Busca la posición de una tarea con el key dado
+
+        @param key: El key de la tarea que se está buscando
+        @return Un entero con la posición si encuentra la tarea o una cadena vacía si no
+    */
+    findTask = (key) => {
+        let pos = ''
+        for (let i = 0; i < this.tasks.length; i++) {
+            if (this.tasks[i].key === key) {
+                pos = i
+                break
+            }
+        }
+        return pos
+    }
+
+    /* 
+        Cambia la descripción de una tarea
+
+        @param key: El key de la tarea
+        @param value: El nuevo valor para la descripción
+    */
+    changeDescription = (key, value) => {
+        let pos = this.findTask(key)
+        if (!isNaN(pos)) {
+            this.tasks[pos].description = value // Almacenamos en la lista la descripción
+            let name = `t_${key}`
+            let task = JSON.parse(window.localStorage.getItem(name)) //El objeto del localStorage
+            task.description = value // Almacenamos el nuevo valor en el localStorage
+            window.localStorage.removeItem(name)
+            window.localStorage.setItem(name, JSON.stringify(task)) // Volvemos a introducirlo, con la modificación
+        }
+    }
+
+    /* 
+        Cambia el check de una tarea
+
+        @param key: El key de la tarea
+    */
+    changeClick = (key) => {
+        let pos = this.findTask(key)
+        if (!isNaN(pos)) {
+            this.tasks[pos].check = this.tasks[pos].check ? false : true
+            let name = `t_${key}`
+            let task = JSON.parse(window.localStorage.getItem(name))
+            task.check = this.tasks[pos].check
+            window.localStorage.removeItem(name)
+            window.localStorage.setItem(name, JSON.stringify(task))
+        }
+    }
+
+    /* 
+        Cambia la fecha de una tarea
+
+        @param key: El key de la tarea
+        @param value: La nueva fecha
+
+    */
+    changeDate = (key, value) => {
+        let pos = this.findTask(key)
+        if (!isNaN(pos)) {
+            this.tasks[pos].date = value // Almacenamos en la lista
+            let name = `t_${key}`
+            let task = JSON.parse(window.localStorage.getItem(name))
+            task.date = value
+            window.localStorage.removeItem(name)
+            window.localStorage.setItem(name, JSON.stringify(task))
+        }
+    }
+
+    /* 
+        Crea una tarea 
+
+        @note1 Crea una tarea y le asigna un key por defecto, después el key se incrementará para la siguiente tarea. 
+        @note2 Almacena numKey en el localStorage, para llevar un conteo del total de tareas creadas
+    */
+    createTask = () => {
+        this.tasks.push(new Task(this.numKey))
+        // Almacenamos la última tarea en el localStorage
+        window.localStorage.setItem(`t_${this.numKey}`, JSON.stringify(this.tasks[this.tasks.length - 1]))
+        this.numKey++
+        window.localStorage.numKey = this.numKey
+    }
+
+    /* 
+        Elimina una tarea
+
+        @param key: El key de la tarea a eliminar
+    */
+    removeTask = (key) => {
+        let pos = this.findTask(key)
+        this.tasks.splice(pos, 1)
+        let name = `t_${key}`
+        window.localStorage.removeItem(name)
+    }
+
+    /* 
+        Copia una tarea
+
+        @param task: La tarea a copiar
+        @note Crea la tarea en this.tasks y después le copia los datos
+    */
+    copyTask = (task) => {
+        this.tasks.push(new Task(task.key))
+        let last = this.tasks.length - 1
+        this.tasks[last].check = task.check
+        this.tasks[last].description = task.description
+        this.tasks[last].date = task.date
+
+        // Si la nueva tarea tiene un key superior a numKey, quiere decir que se han eliminado tareas
+        // Los nuevas asignaciones deben de ir a continuación del valor del key si éste es más alto
+        // ¿Por qué? Porque es la implementación más sencilla, de otra manera, tendríamos que tener en cuenta
+        // los numKey que faltan en la secuencia e ir completándolos...
+        if (task.key > this.numKey) {
+            this.numKey = task.key + 1
+        } else {
+            this.numKey++
+        }
+    } //copyTask()
+} // class List
+
+/* 
+    Muestra el botón de eliminar cuando el mouse entra a la tarea
+*/
 mouseEnterTask = (event) => {
     const $taskRemove = this.event.toElement.children[3]
     $taskRemove.classList.add('show')
 }
 
+/* 
+    Oculta el botón de eliminar cuando el mouse abandona la tarea
+*/
 mouseLeaveTask = (event) => {
     const $taskRemove = this.event.fromElement.children[3]
     $taskRemove.classList.remove('show')
 }
 
+/* 
+    Detecta un click taskCheck y avisa a changeClick()
+*/
 checkClick = () => {
+    myList.changeClick(parseInt(event.target.parentNode.dataset.id))
     event.target.classList.toggle('done')
     event.target.parentNode.classList.toggle('done')
 }
 
+/* 
+    Detecta un click taskRemove y avisa a removeTask()
+*/
 taskRemoveClick = () => {
-    /*  debugger */
+    myList.removeTask(parseInt(event.target.parentNode.parentNode.dataset.id))
     event.target.parentNode.parentNode.remove()
 }
 
-printTasks = () => {
-
+/* 
+    Detecta cambio en taskDescription y avisa a changeDescription()
+*/
+taskDescriptionChange = () => {
+    myList.changeDescription(parseInt(event.target.parentNode.dataset.id), event.target.value)
 }
 
+/* 
+    Detecta un cambio en taskDate y avisa a changeDate()
+*/
+taskDateChange = () => {
+    myList.changeDate(parseInt(event.target.parentNode.dataset.id), event.target.value)
+}
+
+// Selección de elementos del DOM
 const $buttonAdd = document.getElementById("buttonAdd")
 const $tasks = document.querySelectorAll("task")
 const $list = document.getElementById("list").children
 const $listDOM = document.getElementById("list")
 
+// Creación de la lista perteneciente a la APP
 var myList = new List()
 
+/* 
+    Detecta un click en el botón de añadir tarea
+*/
 $buttonAdd.addEventListener('click', () => {
-    myList.setTasks($list)
     let $nuevaTarea = ''
-    let nuevaTarea = new Task()
     $nuevaTarea += myList.getTasks()
-    $nuevaTarea += myList.getTaskToPrint(nuevaTarea)
+    myList.createTask()
+    $nuevaTarea += myList.getTaskToPrint(myList.tasks[myList.tasks.length - 1])
     $listDOM.innerHTML = $nuevaTarea
 })
 
+/* 
+    Recupera del localStorage las tareas, si las hubiere, y las almacena en myList
+    Muestra las tareas en el DOM
+    
+*/
 window.onload = () => {
     let task = JSON.parse(window.localStorage.getItem('t_0')) // Comprobamos que existe al menos una tarea
     let i = 0, tasksHTML = ''
-    while (task) { // Si no hay nada no entra y si hay alguna tarea se ejecuta hasta que no haya más
-        tasksHTML += myList.getTaskToPrint(task)
+     // Si no hay nada no entra y si hay alguna tarea se ejecuta hasta que no haya más
+    while (i < window.localStorage.getItem('numKey')) {
+        if (task) {
+            myList.copyTask(task)
+            tasksHTML += myList.getTaskToPrint(task)
+        }
         i++
         task = JSON.parse(window.localStorage.getItem(`t_${i}`))
     }
